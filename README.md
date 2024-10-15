@@ -31,13 +31,13 @@ Here we provide an example usage with KUKA LBR robot. We used the [lbr_fri_ros2_
   In Gazebo, you should be able to see the camera with image capture:
 
   <p align="left">
-    <img src="https://github.com/user-attachments/assets/160aea8d-c1d6-4e97-8d65-008863f81158" alt="Screenshot from 2024-10-15 09-22-00" width="400"/>
+    <img src="https://github.com/user-attachments/assets/160aea8d-c1d6-4e97-8d65-008863f81158" alt="Screenshot from 2024-10-15 09-22-00" width="550"/>
   </p>
 
   In rviz, add the image topic and choose  `/camera/image_raw`, you should be able to see the camera image:
 
   <p align="left">
-    <img src="https://github.com/user-attachments/assets/18c6dcc2-dd06-4b0e-a4c1-7fbe3859a826" alt="Screenshot from 2024-10-15 09-22-25" width="400"/>
+    <img src="https://github.com/user-attachments/assets/18c6dcc2-dd06-4b0e-a4c1-7fbe3859a826" alt="Screenshot from 2024-10-15 09-22-25" width="550"/>
   </p>
 
 ### 4. Taking samples and simulate the hand-eye calibration process
@@ -50,12 +50,12 @@ Here we provide an example usage with KUKA LBR robot. We used the [lbr_fri_ros2_
   ```
   You should be able to see a new camera window popping up:
   <p align="left">
-    <img src="https://github.com/user-attachments/assets/683e0c62-b23e-4bf6-8c24-d6cc88135cd3" alt="Screenshot from 2024-10-15 09-24-04" width="400"/>
+    <img src="https://github.com/user-attachments/assets/683e0c62-b23e-4bf6-8c24-d6cc88135cd3" alt="Screenshot from 2024-10-15 09-24-04" width="550"/>
   </p>
 
   Press key `q` to record both robot and sample pose, and press key `e` to exit. You should be able to see the marker image, robot_data_simulation.yaml, marker_data_simulation.yaml being saved under `handeye_sim/resource`
   <p align="left">
-    <img src="https://github.com/user-attachments/assets/84f75b4f-d020-4a05-ba59-64d2e7223f37" alt="Screenshot from 2024-10-15 09-34-49" width="400"/>
+    <img src="https://github.com/user-attachments/assets/84f75b4f-d020-4a05-ba59-64d2e7223f37" alt="Screenshot from 2024-10-15 09-34-49" width="550"/>
   </p>
 
 ### 5. Compute handeye calibration and compare with the ground truth

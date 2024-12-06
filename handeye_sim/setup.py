@@ -18,7 +18,7 @@ setup(
     zip_safe=True,
     maintainer='szhuang',
     maintainer_email='heyeason@outlook.com',
-    description='TODO: Package description',
+    description='ROS2 simulation package for hand-eye calibration',
     license='Apache-2.0',
     tests_require=['pytest'],
     entry_points={

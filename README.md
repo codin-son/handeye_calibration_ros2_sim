@@ -13,7 +13,9 @@ To get yourself started, please prepare
 
 ## Example usage
 
-Here we provide an example usage with KUKA LBR robot. We used the [lbr_fri_ros2_stack](https://github.com/lbr-stack/lbr_fri_ros2_stack). At the time of development, we used [Humble v2.0.0](https://github.com/lbr-stack/lbr_fri_ros2_stack/releases/tag/humble-v2.0.0) of the driver. We are just aware that the way the commands to run the KUKA simulation have changed. Please adapt the command lines if necessary.
+Here we provide an example usage with KUKA LBR robot. We used the [lbr_fri_ros2_stack](https://github.com/lbr-stack/lbr_fri_ros2_stack). 
+
+***At the time of development, we used [Humble v2.0.0](https://github.com/lbr-stack/lbr_fri_ros2_stack/releases/tag/humble-v2.0.0) of the driver. We are just aware that the way the commands to run the KUKA simulation have changed. Please adapt the command lines wherever necessary.***
 
 ### 1. Add the camera description files
 

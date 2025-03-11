@@ -15,7 +15,7 @@ To get yourself started, please prepare
 
 Here we provide an example usage with KUKA LBR robot. We used the [lbr_fri_ros2_stack](https://github.com/lbr-stack/lbr_fri_ros2_stack). 
 
-**Adding ArUco marker to Gazebo Classic**: Please refer [here](https://github.com/mikaelarguedas/gazebo_models/tree/master). 
+**Adding ArUco marker to Gazebo Classic**: Please refer [here](https://github.com/mikaelarguedas/gazebo_models/tree/master). Video instruction [here](https://www.youtube.com/watch?v=A3fJwTL2O4g).
 
 ***Update Jan. 23rd 2025: At the time of development, we used [Humble v2.0.0](https://github.com/lbr-stack/lbr_fri_ros2_stack/releases/tag/humble-v2.0.0) of the driver. We are just aware that the commands to run the KUKA simulation have changed. Please adapt the command lines wherever necessary.***
 

@@ -1,0 +1,27 @@
+services:
+  handeye_sim:
+    build: .
+    image: handeye_sim:humble
+    container_name: handeye_sim
+    # Host network + IPC for DDS discovery and shared memory transport
+    network_mode: host
+    ipc: host
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      # Live-edit the package and persist samples/results on the host
+      # (image was built with --symlink-install)
+      - ./handeye_sim:/handeye_ws/src/handeye_sim:rw
+    stdin_open: true
+    tty: true
+    command: bash
+
+    # Uncomment for NVIDIA GPU rendering (requires nvidia-container-toolkit)
+    # runtime: nvidia
+    # environment:
+    #   - DISPLAY=${DISPLAY}
+    #   - QT_X11_NO_MITSHM=1
+    #   - NVIDIA_VISIBLE_DEVICES=all
+    #   - NVIDIA_DRIVER_CAPABILITIES=all

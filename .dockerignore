@@ -1,0 +1,11 @@
+.git
+**/__pycache__
+Dockerfile
+docker-compose.yml
+DOCKER.md
+README.md
+LICENSE
+handeye_sim/resource/*.jpg
+handeye_sim/resource/*.png
+handeye_sim/resource/*.pdf
+handeye_sim/resource/*.gv

@@ -57,5 +57,8 @@ ros2 run handeye_sim eye2hand
   describes (see [gazebo_models](https://github.com/mikaelarguedas/gazebo_models/tree/master)).
   Marker side length must match `aruco_marker_side_length` in `handeye_sim/config.yaml`
   (0.150 m).
-- For NVIDIA GPU rendering, uncomment the `runtime: nvidia` block in
-  `docker-compose.yml` (requires nvidia-container-toolkit).
+- NVIDIA GPU rendering is enabled (`runtime: nvidia`, `gpus: all`; requires
+  nvidia-container-toolkit). On a machine without NVIDIA, remove those two lines —
+  the `/dev/dri` passthrough covers Intel/AMD via Mesa. On hybrid (Optimus) laptops
+  where GL still falls back to Mesa, uncomment the `__NV_PRIME_RENDER_OFFLOAD` /
+  `__GLX_VENDOR_LIBRARY_NAME` lines.

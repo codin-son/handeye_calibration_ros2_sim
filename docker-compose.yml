@@ -6,9 +6,23 @@ services:
     # Host network + IPC for DDS discovery and shared memory transport
     network_mode: host
     ipc: host
+    # Host's /etc/hosts lacks a "127.0.0.1 localhost" entry; the container
+    # inherits it under host networking and Gazebo needs localhost to resolve
+    extra_hosts:
+      - "localhost:127.0.0.1"
+    runtime: nvidia
+    gpus: all
     environment:
       - DISPLAY=${DISPLAY}
       - QT_X11_NO_MITSHM=1
+      # "all" includes graphics — required for OpenGL/GLX, default is compute-only
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      # Uncomment on hybrid (Optimus) laptops if GL still falls back to Mesa:
+      # - __NV_PRIME_RENDER_OFFLOAD=1
+      # - __GLX_VENDOR_LIBRARY_NAME=nvidia
+    # Also pass the iGPU so Mesa works when the X server runs on Intel
+    devices:
+      - /dev/dri:/dev/dri
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       # Live-edit the package and persist samples/results on the host
@@ -17,11 +31,3 @@ services:
     stdin_open: true
     tty: true
     command: bash
-
-    # Uncomment for NVIDIA GPU rendering (requires nvidia-container-toolkit)
-    # runtime: nvidia
-    # environment:
-    #   - DISPLAY=${DISPLAY}
-    #   - QT_X11_NO_MITSHM=1
-    #   - NVIDIA_VISIBLE_DEVICES=all
-    #   - NVIDIA_DRIVER_CAPABILITIES=all

@@ -72,7 +72,13 @@ class ArucoNode(Node):
         cv_file.release()
 
         self.this_aruco_dictionary = cv2.aruco.getPredefinedDictionary(ARUCO_DICT[aruco_dictionary_name])
-        self.this_aruco_parameters = cv2.aruco.DetectorParameters()
+        # Ubuntu 22.04 ships OpenCV 4.5, where detector parameters are
+        # constructed with DetectorParameters_create().  OpenCV 4.7+ exposes
+        # DetectorParameters as a regular constructor instead.
+        if hasattr(cv2.aruco, 'DetectorParameters'):
+            self.this_aruco_parameters = cv2.aruco.DetectorParameters()
+        else:
+            self.this_aruco_parameters = cv2.aruco.DetectorParameters_create()
 
         self.subscription = self.create_subscription(Image, self.image_topic, self.listener_callback, 10)
         self.keypress_publisher = self.create_publisher(String, 'keypress_topic', 10)
@@ -115,6 +121,8 @@ class ArucoNode(Node):
     def listener_callback(self, data):
         current_frame = self.bridge.imgmsg_to_cv2(data)
         corners, marker_ids, rejected = cv2.aruco.detectMarkers(current_frame, self.this_aruco_dictionary, parameters=self.this_aruco_parameters)
+        rvecs = None
+        tvecs = None
 
         if marker_ids is not None:
             cv2.aruco.drawDetectedMarkers(current_frame, corners, marker_ids)
@@ -153,6 +161,9 @@ class ArucoNode(Node):
         cv2.imshow("camera", current_frame)
         key = cv2.waitKey(1)
         if key == ord('q'):
+            if rvecs is None or tvecs is None:
+                self.get_logger().warning("No ArUco marker detected; sample was not saved.")
+                return
             self.save_marker_data(rvecs, tvecs)
             self.save_image(current_frame)
             self.get_logger().info(f"Saved pose_{self.pose_count} marker transform.")
@@ -199,9 +210,12 @@ def main(args=None):
 
     try:
         rclpy.spin(aruco_node)
+    except KeyboardInterrupt:
+        pass
     finally:
         aruco_node.destroy_node()
-        rclpy.shutdown()
+        if rclpy.ok():
+            rclpy.shutdown()
 
 if __name__ == '__main__':
     main()

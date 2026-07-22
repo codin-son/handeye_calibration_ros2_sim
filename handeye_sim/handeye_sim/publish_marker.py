@@ -74,7 +74,11 @@ class PublishMarkerNode(Node):
         cv_file.release()
 
         self.this_aruco_dictionary = cv2.aruco.getPredefinedDictionary(ARUCO_DICT[aruco_dictionary_name])
-        self.this_aruco_parameters = cv2.aruco.DetectorParameters()
+        # Support both Ubuntu 22.04's OpenCV 4.5 API and OpenCV 4.7+.
+        if hasattr(cv2.aruco, 'DetectorParameters'):
+            self.this_aruco_parameters = cv2.aruco.DetectorParameters()
+        else:
+            self.this_aruco_parameters = cv2.aruco.DetectorParameters_create()
 
         self.subscription = self.create_subscription(Image, self.image_topic, self.listener_callback, 10)
 
@@ -199,9 +203,12 @@ def main(args=None):
     publish_marker_node = PublishMarkerNode()
     try:
         rclpy.spin(publish_marker_node)
+    except KeyboardInterrupt:
+        pass
     finally:
         publish_marker_node.destroy_node()
-        rclpy.shutdown()
+        if rclpy.ok():
+            rclpy.shutdown()
 
 if __name__ == '__main__':
     main()

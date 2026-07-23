@@ -203,6 +203,70 @@
     </sensor>
   </gazebo>
 
+  <!-- Fixed overhead camera (eye-to-hand). Static above the workspace,
+       looking straight down. No mounting pole visual so nothing occludes
+       the view. Same intrinsics as the flange camera
+       (fx=fy=500, cx=320, cy=240). Publishes on /top_camera/... topics. -->
+  <joint name="top_camera_joint" type="fixed">
+    <parent link="world"/>
+    <child link="top_camera_link"/>
+    <origin xyz="0.35 0 1.55" rpy="0 ${pi/2} 0"/>
+  </joint>
+
+  <link name="top_camera_link">
+    <visual>
+      <geometry><box size="0.03 0.03 0.03"/></geometry>
+      <material name="gray"/>
+    </visual>
+    <xacro:default_inertial mass="0.05"/>
+  </link>
+
+  <joint name="top_camera_optical_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+    <parent link="top_camera_link"/>
+    <child link="top_camera_link_optical"/>
+  </joint>
+
+  <link name="top_camera_link_optical"/>
+
+  <gazebo reference="top_camera_link">
+    <material>Gazebo/Gray</material>
+    <sensor name="top_camera" type="camera">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>true</visualize>
+      <update_rate>10</update_rate>
+      <camera>
+        <horizontal_fov>1.089</horizontal_fov>
+        <image>
+          <format>R8G8B8</format>
+          <width>640</width>
+          <height>480</height>
+        </image>
+        <clip>
+          <near>0.05</near>
+          <far>8.0</far>
+        </clip>
+        <lens>
+          <intrinsics>
+            <fx>500</fx>
+            <fy>500</fy>
+            <cx>320</cx>
+            <cy>240</cy>
+            <s>0</s>
+          </intrinsics>
+        </lens>
+      </camera>
+      <plugin name="top_camera_controller" filename="libgazebo_ros_camera.so">
+        <frame_name>top_camera_link_optical</frame_name>
+        <imageTopicName>top_camera/image_raw</imageTopicName>
+        <cameraInfoTopicName>top_camera/camera_info</cameraInfoTopicName>
+        <Cx>320</Cx>
+        <Cy>240</Cy>
+        <focalLength>500</focalLength>
+      </plugin>
+    </sensor>
+  </gazebo>
+
   <gazebo reference="base_link"><material>Gazebo/DarkGrey</material></gazebo>
   <gazebo reference="link1"><material>Gazebo/Orange</material></gazebo>
   <gazebo reference="link2"><material>Gazebo/Orange</material></gazebo>

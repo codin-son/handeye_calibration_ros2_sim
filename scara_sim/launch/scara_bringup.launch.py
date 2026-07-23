@@ -83,7 +83,7 @@ def generate_launch_description():
             package='gazebo_ros',
             executable='spawn_entity.py',
             arguments=['-entity', 'aruco_marker', '-file', marker_sdf,
-                       '-x', '0.35', '-y', '0.0', '-z', '0.001'],
+                       '-x', '0.47', '-y', '0.0', '-z', '0.001'],
             output='screen',
         )
         actions.append(TimerAction(period=6.0, actions=[spawn_marker]))

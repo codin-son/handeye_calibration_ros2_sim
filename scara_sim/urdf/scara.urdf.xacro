@@ -1,0 +1,245 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="scara">
+
+  <!-- igus-like SCARA with J1 revolute (shoulder), J2 revolute (elbow),
+       J3 prismatic (Z quill, downward), J4 revolute (wrist roll).
+       Link lengths L1 = L2 = 0.25 m, column height 0.55 m, Z stroke 0.12 m.
+       NOTE keep comments free of colon+space; gazebo_ros2_control on Humble
+       passes this URDF through rcl YAML arg parsing and colon+space breaks it. -->
+
+  <material name="igus_orange"><color rgba="0.95 0.45 0.1 1"/></material>
+  <material name="dark"><color rgba="0.2 0.2 0.2 1"/></material>
+  <material name="gray"><color rgba="0.5 0.5 0.5 1"/></material>
+
+  <xacro:macro name="default_inertial" params="mass">
+    <inertial>
+      <mass value="${mass}"/>
+      <inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/>
+    </inertial>
+  </xacro:macro>
+
+  <link name="world"/>
+
+  <joint name="world_joint" type="fixed">
+    <parent link="world"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Pedestal column -->
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 0.275"/>
+      <geometry><box size="0.12 0.12 0.55"/></geometry>
+      <material name="dark"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.275"/>
+      <geometry><box size="0.12 0.12 0.55"/></geometry>
+    </collision>
+    <xacro:default_inertial mass="10.0"/>
+  </link>
+
+  <!-- J1 shoulder -->
+  <joint name="joint1" type="revolute">
+    <parent link="base_link"/>
+    <child link="link1"/>
+    <origin xyz="0 0 0.55" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-2.62" upper="2.62" effort="100" velocity="1.5"/>
+    <dynamics damping="5.0"/>
+  </joint>
+
+  <link name="link1">
+    <visual>
+      <origin xyz="0.125 0 0.03"/>
+      <geometry><box size="0.30 0.08 0.06"/></geometry>
+      <material name="igus_orange"/>
+    </visual>
+    <collision>
+      <origin xyz="0.125 0 0.03"/>
+      <geometry><box size="0.30 0.08 0.06"/></geometry>
+    </collision>
+    <xacro:default_inertial mass="2.0"/>
+  </link>
+
+  <!-- J2 elbow (second arm hangs below the first) -->
+  <joint name="joint2" type="revolute">
+    <parent link="link1"/>
+    <child link="link2"/>
+    <origin xyz="0.25 0 -0.07" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-2.62" upper="2.62" effort="100" velocity="1.5"/>
+    <dynamics damping="5.0"/>
+  </joint>
+
+  <link name="link2">
+    <visual>
+      <origin xyz="0.125 0 0.03"/>
+      <geometry><box size="0.30 0.07 0.06"/></geometry>
+      <material name="igus_orange"/>
+    </visual>
+    <collision>
+      <origin xyz="0.125 0 0.03"/>
+      <geometry><box size="0.30 0.07 0.06"/></geometry>
+    </collision>
+    <xacro:default_inertial mass="1.5"/>
+  </link>
+
+  <!-- J3 vertical quill, slides down (negative z) -->
+  <joint name="joint3" type="prismatic">
+    <parent link="link2"/>
+    <child link="link3"/>
+    <origin xyz="0.25 0 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-0.12" upper="0.0" effort="100" velocity="0.5"/>
+    <dynamics damping="20.0"/>
+  </joint>
+
+  <link name="link3">
+    <visual>
+      <origin xyz="0 0 -0.04"/>
+      <geometry><cylinder radius="0.02" length="0.22"/></geometry>
+      <material name="dark"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.04"/>
+      <geometry><cylinder radius="0.02" length="0.22"/></geometry>
+    </collision>
+    <xacro:default_inertial mass="0.8"/>
+  </link>
+
+  <!-- J4 wrist roll (tool flange) -->
+  <joint name="joint4" type="revolute">
+    <parent link="link3"/>
+    <child link="link4"/>
+    <origin xyz="0 0 -0.14" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-3.14" upper="3.14" effort="50" velocity="3.0"/>
+    <dynamics damping="1.0"/>
+  </joint>
+
+  <link name="link4">
+    <visual>
+      <origin xyz="0 0 -0.01"/>
+      <geometry><cylinder radius="0.03" length="0.02"/></geometry>
+      <material name="gray"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 -0.01"/>
+      <geometry><cylinder radius="0.03" length="0.02"/></geometry>
+    </collision>
+    <xacro:default_inertial mass="0.3"/>
+  </link>
+
+  <joint name="ee_joint" type="fixed">
+    <parent link="link4"/>
+    <child link="link_ee"/>
+    <origin xyz="0 0 -0.02" rpy="0 0 0"/>
+  </joint>
+
+  <link name="link_ee"/>
+
+  <!-- Camera mounted beside the quill on the flange, looking straight down.
+       Sensor block mirrors camera_descriptions_example/iiwa7 (same intrinsics
+       as handeye_sim/camera_info.yaml; fx=fy=500, cx=320, cy=240). -->
+  <joint name="camera_joint" type="fixed">
+    <parent link="link_ee"/>
+    <child link="camera_link"/>
+    <origin xyz="0.05 0 0.01" rpy="0 ${pi/2} 0"/>
+  </joint>
+
+  <link name="camera_link">
+    <visual>
+      <geometry><box size="0.03 0.03 0.03"/></geometry>
+      <material name="gray"/>
+    </visual>
+    <xacro:default_inertial mass="0.05"/>
+  </link>
+
+  <joint name="camera_optical_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+    <parent link="camera_link"/>
+    <child link="camera_link_optical"/>
+  </joint>
+
+  <link name="camera_link_optical"/>
+
+  <gazebo reference="camera_link">
+    <material>Gazebo/Gray</material>
+    <sensor name="camera" type="camera">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>true</visualize>
+      <update_rate>10</update_rate>
+      <camera>
+        <horizontal_fov>1.089</horizontal_fov>
+        <image>
+          <format>R8G8B8</format>
+          <width>640</width>
+          <height>480</height>
+        </image>
+        <clip>
+          <near>0.05</near>
+          <far>8.0</far>
+        </clip>
+        <lens>
+          <intrinsics>
+            <fx>500</fx>
+            <fy>500</fy>
+            <cx>320</cx>
+            <cy>240</cy>
+            <s>0</s>
+          </intrinsics>
+        </lens>
+      </camera>
+      <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+        <frame_name>camera_link_optical</frame_name>
+        <imageTopicName>camera/image_raw</imageTopicName>
+        <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+        <Cx>320</Cx>
+        <Cy>240</Cy>
+        <focalLength>500</focalLength>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <gazebo reference="base_link"><material>Gazebo/DarkGrey</material></gazebo>
+  <gazebo reference="link1"><material>Gazebo/Orange</material></gazebo>
+  <gazebo reference="link2"><material>Gazebo/Orange</material></gazebo>
+  <gazebo reference="link3"><material>Gazebo/DarkGrey</material></gazebo>
+  <gazebo reference="link4"><material>Gazebo/Grey</material></gazebo>
+
+  <!-- ros2_control -->
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+    <joint name="joint1">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="joint2">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="joint3">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="joint4">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+  <gazebo>
+    <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+      <parameters>$(find scara_sim)/config/scara_controllers.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+</robot>

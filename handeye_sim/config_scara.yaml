@@ -10,31 +10,23 @@ robot_data_file_name: "src/handeye_sim/resource/robot_data_simulation.yaml"
 handeye_result_file_name: "src/handeye_sim/resource/handeye_result_simulation.yaml"
 handeye_result_profile_file_name: "src/handeye_sim/resource/handeye_result_simulation_profile.yaml"
 
-base_link: "lbrlink_0"
-ee_link: "lbrlink_ee"
+base_link: "base_link"
+ee_link: "link_ee"
 world_frame: "world"
 
 link_order_publish_marker:
-  - ['world', 'lbr/world']
-  - ['lbr/world', 'lbrlink_0']
-  - ['lbrlink_0', 'lbrlink_1']
-  - ['lbrlink_1', 'lbrlink_2']
-  - ['lbrlink_2', 'lbrlink_3']
-  - ['lbrlink_3', 'lbrlink_4']
-  - ['lbrlink_4', 'lbrlink_5']
-  - ['lbrlink_5', 'lbrlink_6']
-  - ['lbrlink_6', 'lbrlink_7']
-  - ['lbrlink_7', 'lbrlink_ee']
-  - ['lbrlink_ee', 'camera_optical_sim']
+  - ['world', 'base_link']
+  - ['base_link', 'link1']
+  - ['link1', 'link2']
+  - ['link2', 'link3']
+  - ['link3', 'link4']
+  - ['link4', 'link_ee']
+  - ['link_ee', 'camera_optical_sim']
 
 link_order_publish_eye2hand:
-  - ['world', 'lbr/world']
-  - ['lbr/world', 'lbrlink_0']
-  - ['lbrlink_0', 'lbrlink_1']
-  - ['lbrlink_1', 'lbrlink_2']
-  - ['lbrlink_2', 'lbrlink_3']
-  - ['lbrlink_3', 'lbrlink_4']
-  - ['lbrlink_4', 'lbrlink_5']
-  - ['lbrlink_5', 'lbrlink_6']
-  - ['lbrlink_6', 'lbrlink_7']
-  - ['lbrlink_7', 'lbrlink_ee']
+  - ['world', 'base_link']
+  - ['base_link', 'link1']
+  - ['link1', 'link2']
+  - ['link2', 'link3']
+  - ['link3', 'link4']
+  - ['link4', 'link_ee']
